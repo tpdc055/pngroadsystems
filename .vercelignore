@@ -1,0 +1,29 @@
+
+# Development files
+.env
+.env.local
+.env.development
+.env.test
+
+# Build files  
+.next
+node_modules
+*.log
+
+# Database files
+prisma/dev.db
+prisma/migrations
+
+# Upload files (not needed in production)
+uploads/
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+

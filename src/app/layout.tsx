@@ -4,6 +4,8 @@ import ClientBody from "./ClientBody";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SystemSettingsProvider } from "@/contexts/SystemSettingsContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "PNG Road Construction Monitor",
@@ -25,6 +27,8 @@ export default function RootLayout({
             </SystemSettingsProvider>
           </AuthProvider>
         </LanguageProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
