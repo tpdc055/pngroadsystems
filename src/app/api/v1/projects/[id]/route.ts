@@ -3,11 +3,12 @@ import { MockAPIService } from '@/lib/mockApiService';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Pure mock data response - no database dependencies
-    const result = await MockAPIService.getProject(params.id);
+    const result = await MockAPIService.getProject(id);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching project:', error);
@@ -21,9 +22,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
     // Validate required fields
@@ -35,7 +37,7 @@ export async function PUT(
     }
 
     // Pure mock data response - no database dependencies
-    const result = await MockAPIService.updateProject(params.id, body);
+    const result = await MockAPIService.updateProject(id, body);
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error('Error updating project:', error);
@@ -49,11 +51,12 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Pure mock data response - no database dependencies
-    const result = await MockAPIService.deleteProject(params.id);
+    const result = await MockAPIService.deleteProject(id);
     return NextResponse.json(result, { status: result.success ? 200 : 404 });
   } catch (error) {
     console.error('Error deleting project:', error);
