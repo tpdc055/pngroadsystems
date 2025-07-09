@@ -3,310 +3,116 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding PNG Road Construction Monitor database...');
+  console.log('Starting database seed...');
 
-  // Create provinces
-  const provinces = await Promise.all([
-    prisma.province.upsert({
-      where: { code: 'WHP' },
-      update: {},
-      create: {
-        id: 'prov-1',
-        name: 'Western Highlands',
-        code: 'WHP',
-        region: 'Highlands'
-      }
-    }),
-    prisma.province.upsert({
-      where: { code: 'NCD' },
-      update: {},
-      create: {
-        id: 'prov-2',
-        name: 'National Capital District',
-        code: 'NCD',
-        region: 'Southern'
-      }
-    }),
-    prisma.province.upsert({
-      where: { code: 'MPL' },
-      update: {},
-      create: {
-        id: 'prov-3',
-        name: 'Morobe',
-        code: 'MPL',
-        region: 'Momase'
-      }
-    })
-  ]);
+  // Seed Provinces
+  const provinces = [
+    { name: 'Western Province', code: 'WP', region: 'Southern' },
+    { name: 'Gulf Province', code: 'GP', region: 'Southern' },
+    { name: 'Central Province', code: 'CP', region: 'Southern' },
+    { name: 'National Capital District', code: 'NCD', region: 'Southern' },
+    { name: 'Oro Province', code: 'OP', region: 'Northern' },
+    { name: 'Southern Highlands Province', code: 'SHP', region: 'Highlands' },
+    { name: 'Western Highlands Province', code: 'WHP', region: 'Highlands' },
+    { name: 'Enga Province', code: 'EP', region: 'Highlands' },
+    { name: 'Hela Province', code: 'HP', region: 'Highlands' },
+    { name: 'Jiwaka Province', code: 'JP', region: 'Highlands' },
+    { name: 'Chimbu Province', code: 'ChP', region: 'Highlands' },
+    { name: 'Eastern Highlands Province', code: 'EHP', region: 'Highlands' },
+    { name: 'Morobe Province', code: 'MP', region: 'Momase' },
+    { name: 'Madang Province', code: 'MaP', region: 'Momase' },
+    { name: 'East Sepik Province', code: 'ESP', region: 'Momase' },
+    { name: 'Sandaun Province', code: 'SP', region: 'Momase' },
+    { name: 'Manus Province', code: 'MnP', region: 'Islands' },
+    { name: 'New Ireland Province', code: 'NIP', region: 'Islands' },
+    { name: 'East New Britain Province', code: 'ENBP', region: 'Islands' },
+    { name: 'West New Britain Province', code: 'WNBP', region: 'Islands' },
+    { name: 'Bougainville Province', code: 'BP', region: 'Islands' },
+    { name: 'Milne Bay Province', code: 'MBP', region: 'Islands' },
+  ];
 
-  // Create work types
-  const workTypes = await Promise.all([
-    prisma.workType.upsert({
-      where: { name: 'Road Construction' },
-      update: {},
-      create: {
-        id: 'wt-1',
-        name: 'Road Construction',
-        category: 'Infrastructure'
-      }
-    }),
-    prisma.workType.upsert({
-      where: { name: 'Bridge Construction' },
-      update: {},
-      create: {
-        id: 'wt-2',
-        name: 'Bridge Construction',
-        category: 'Infrastructure'
-      }
-    }),
-    prisma.workType.upsert({
-      where: { name: 'Road Maintenance' },
-      update: {},
-      create: {
-        id: 'wt-3',
-        name: 'Road Maintenance',
-        category: 'Maintenance'
-      }
-    })
-  ]);
+  for (const province of provinces) {
+    await prisma.province.upsert({
+      where: { code: province.code },
+      update: province,
+      create: province,
+    });
+  }
 
-  // Create users
-  const users = await Promise.all([
-    prisma.user.upsert({
-      where: { email: 'admin@doworks.gov.pg' },
-      update: {},
-      create: {
-        id: 'user-1',
-        email: 'admin@doworks.gov.pg',
-        password: '$2b$10$samplehashedpassword123456789',
-        name: 'Demo Administrator',
-        role: 'ADMIN'
-      }
-    }),
-    prisma.user.upsert({
-      where: { email: 'john.kerenga@doworks.gov.pg' },
-      update: {},
-      create: {
-        id: 'user-2',
-        email: 'john.kerenga@doworks.gov.pg',
-        password: '$2b$10$samplehashedpassword123456789',
-        name: 'John Kerenga',
-        role: 'PROJECT_MANAGER'
-      }
-    }),
-    prisma.user.upsert({
-      where: { email: 'sarah.mendi@doworks.gov.pg' },
-      update: {},
-      create: {
-        id: 'user-3',
-        email: 'sarah.mendi@doworks.gov.pg',
-        password: '$2b$10$samplehashedpassword123456789',
-        name: 'Sarah Mendi',
-        role: 'SITE_ENGINEER'
-      }
-    })
-  ]);
+  console.log('✓ Provinces seeded');
 
-  // Create projects
-  const projects = await Promise.all([
-    prisma.project.upsert({
-      where: { id: 'proj-1' },
-      update: {},
-      create: {
-        id: 'proj-1',
-        name: 'Mt. Hagen-Kagamuga Road Upgrade',
-        description: 'Upgrade of the critical road connecting Mt. Hagen to Kagamuga Airport',
-        location: 'Mt. Hagen, Western Highlands Province',
-        provinceId: provinces[0].id,
-        status: 'ACTIVE',
-        progress: 65,
-        budget: 45000000, // K45M
-        spent: 29250000,  // K29.25M
-        startDate: new Date('2024-03-01'),
-        endDate: new Date('2025-06-30'),
-        contractor: 'PNG Roads Limited',
-        managerId: users[1].id,
-        fundingSource: 'GOVERNMENT'
-      }
-    }),
-    prisma.project.upsert({
-      where: { id: 'proj-2' },
-      update: {},
-      create: {
-        id: 'proj-2',
-        name: 'Port Moresby Ring Road Extension',
-        description: 'Extension of the ring road to improve traffic flow in Port Moresby',
-        location: 'Port Moresby, National Capital District',
-        provinceId: provinces[1].id,
-        status: 'ACTIVE',
-        progress: 42,
-        budget: 85000000, // K85M
-        spent: 35700000,  // K35.7M
-        startDate: new Date('2024-01-15'),
-        endDate: new Date('2025-12-31'),
-        contractor: 'Capital Infrastructure Pty Ltd',
-        managerId: users[1].id,
-        fundingSource: 'GOVERNMENT'
-      }
-    }),
-    prisma.project.upsert({
-      where: { id: 'proj-3' },
-      update: {},
-      create: {
-        id: 'proj-3',
-        name: 'Lae-Nadzab Highway Reconstruction',
-        description: 'Complete reconstruction of the highway connecting Lae to Nadzab Airport',
-        location: 'Lae to Nadzab, Morobe Province',
-        provinceId: provinces[2].id,
-        status: 'PLANNING',
-        progress: 15,
-        budget: 62000000, // K62M
-        spent: 9300000,   // K9.3M
-        startDate: new Date('2024-06-01'),
-        endDate: new Date('2026-03-31'),
-        contractor: 'Morobe Construction Group',
-        managerId: users[1].id,
-        fundingSource: 'GOVERNMENT'
-      }
-    })
-  ]);
+  // Seed Work Types
+  const workTypes = [
+    { name: 'Road Construction', category: 'Construction' },
+    { name: 'Bridge Construction', category: 'Construction' },
+    { name: 'Culvert Installation', category: 'Construction' },
+    { name: 'Drainage Construction', category: 'Construction' },
+    { name: 'Pavement Marking', category: 'Construction' },
+    { name: 'Road Maintenance', category: 'Maintenance' },
+    { name: 'Pothole Repair', category: 'Maintenance' },
+    { name: 'Shoulder Maintenance', category: 'Maintenance' },
+    { name: 'Vegetation Clearing', category: 'Maintenance' },
+    { name: 'Sign Installation', category: 'Safety' },
+    { name: 'Guardrail Installation', category: 'Safety' },
+    { name: 'Traffic Control', category: 'Safety' },
+    { name: 'Survey and Design', category: 'Planning' },
+    { name: 'Environmental Assessment', category: 'Planning' },
+    { name: 'Quality Testing', category: 'Quality Control' },
+    { name: 'Material Testing', category: 'Quality Control' },
+  ];
 
-  // Create GPS entries
-  await Promise.all([
-    prisma.gPSEntry.create({
-      data: {
-        id: 'gps-1',
-        latitude: -5.837104,
-        longitude: 144.295472,
-        description: 'Mt. Hagen Town Center - Project Start',
-        projectId: projects[0].id,
-        userId: users[2].id,
-        taskName: 'Site Survey',
-        workType: 'Survey',
-        roadSide: 'Both',
-        startChainage: '0+000',
-        endChainage: '0+500',
-        taskDescription: 'Initial site survey and traffic count',
-        photos: JSON.stringify([]),
-        timestamp: new Date('2024-03-05T08:30:00Z')
-      }
-    }),
-    prisma.gPSEntry.create({
-      data: {
-        id: 'gps-2',
-        latitude: -9.4438,
-        longitude: 147.1803,
-        description: 'Jacksons Airport Junction',
-        projectId: projects[1].id,
-        userId: users[2].id,
-        taskName: 'Foundation Work',
-        workType: 'Construction',
-        roadSide: 'Left',
-        startChainage: '1+200',
-        endChainage: '1+800',
-        taskDescription: 'Foundation preparation for ring road extension',
-        photos: JSON.stringify([]),
-        timestamp: new Date('2024-01-20T10:15:00Z')
-      }
-    })
-  ]);
+  for (const workType of workTypes) {
+    await prisma.workType.upsert({
+      where: { name: workType.name },
+      update: workType,
+      create: workType,
+    });
+  }
 
-  // Create financial entries
-  await Promise.all([
-    prisma.financialEntry.create({
-      data: {
-        id: 'fin-1',
-        projectId: projects[0].id,
-        userId: users[1].id,
-        category: 'MATERIALS',
-        type: 'EXPENSE',
-        amount: 2500000, // K2.5M
-        description: 'Aggregate and bitumen purchase',
-        date: new Date('2024-03-10'),
-        invoiceNumber: 'INV-2024-001',
-        vendor: 'PNG Materials Supply Co.',
-        isApproved: true,
-        approvedBy: users[0].id,
-        approvedAt: new Date('2024-03-12'),
-        currency: 'PGK',
-        exchangeRate: 1.0
-      }
-    }),
-    prisma.financialEntry.create({
-      data: {
-        id: 'fin-2',
-        projectId: projects[1].id,
-        userId: users[1].id,
-        category: 'EQUIPMENT',
-        type: 'EXPENSE',
-        amount: 1800000, // K1.8M
-        description: 'Heavy machinery rental',
-        date: new Date('2024-01-25'),
-        invoiceNumber: 'INV-2024-002',
-        vendor: 'PNG Heavy Equipment Hire',
-        isApproved: true,
-        approvedBy: users[0].id,
-        approvedAt: new Date('2024-01-26'),
-        currency: 'PGK',
-        exchangeRate: 1.0
-      }
-    })
-  ]);
+  console.log('✓ Work types seeded');
 
-  // Create progress entries
-  await Promise.all([
-    prisma.progressEntry.create({
-      data: {
-        id: 'prog-1',
-        projectId: projects[0].id,
-        date: new Date('2024-12-01'),
-        physicalProgress: 65,
-        financialProgress: 62,
-        plannedProgress: 60,
-        milestones: 'Bridge foundation completed, road surface 60% complete',
-        issues: 'Weather delays due to heavy rain',
-        nextActions: 'Continue surfacing work, install drainage',
-        weatherConditions: 'Heavy rain periods',
-        workforceCount: 45,
-        equipmentStatus: 'All equipment operational',
-        notes: 'Good progress despite weather challenges'
-      }
-    }),
-    prisma.progressEntry.create({
-      data: {
-        id: 'prog-2',
-        projectId: projects[1].id,
-        date: new Date('2024-12-01'),
-        physicalProgress: 42,
-        financialProgress: 40,
-        plannedProgress: 45,
-        milestones: 'Earth works 80% complete, drainage installation started',
-        issues: 'Land acquisition delays in some sections',
-        nextActions: 'Complete drainage work, start road base preparation',
-        weatherConditions: 'Dry season favorable for construction',
-        workforceCount: 78,
-        equipmentStatus: '2 excavators under maintenance',
-        notes: 'Behind schedule due to land issues'
-      }
-    })
-  ]);
+  // Create a default admin user
+  await prisma.user.upsert({
+    where: { email: 'admin@png.gov.pg' },
+    update: {},
+    create: {
+      email: 'admin@png.gov.pg',
+      password: '$2b$10$8vVa8aDvEMGzYMkO6U7tBOwGvPvKh3FQgGhCKYg6OmkNEbEfMPYqO', // password: admin123
+      name: 'System Administrator',
+      role: 'ADMIN',
+      isActive: true,
+    },
+  });
 
-  console.log('✅ Database seeded successfully!');
-  console.log(`📊 Created:`);
-  console.log(`   - ${provinces.length} provinces`);
-  console.log(`   - ${workTypes.length} work types`);
-  console.log(`   - ${users.length} users`);
-  console.log(`   - ${projects.length} projects`);
-  console.log(`   - 2 GPS entries`);
-  console.log(`   - 2 financial entries`);
-  console.log(`   - 2 progress entries`);
+  console.log('✓ Default admin user created (admin@png.gov.pg / admin123)');
+
+  // Create some contractors
+  const contractors = [
+    { name: 'PNG Construction Ltd', email: 'contact@pngconstruction.pg', phone: '+675 321 1234', specialty: 'Road Construction', rating: 4.5 },
+    { name: 'Highlands Infrastructure', email: 'info@highlands.pg', phone: '+675 321 2345', specialty: 'Bridge Construction', rating: 4.2 },
+    { name: 'Pacific Roads Company', email: 'office@pacificroads.pg', phone: '+675 321 3456', specialty: 'Highway Construction', rating: 4.8 },
+    { name: 'Island Bridge Works', email: 'contact@islandbridge.pg', phone: '+675 321 4567', specialty: 'Bridge and Culvert', rating: 4.3 },
+  ];
+
+  for (const contractor of contractors) {
+    await prisma.contractor.upsert({
+      where: { name: contractor.name },
+      update: contractor,
+      create: contractor,
+    });
+  }
+
+  console.log('✓ Contractors seeded');
+
+  console.log('🎉 Database seeded successfully!');
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Error seeding database:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
   });

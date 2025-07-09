@@ -4,8 +4,8 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Check if we're in mock mode - don't initialize Prisma if we are
-const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true' || process.env.NODE_ENV === 'development';
+// Check if we're in mock mode
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
 function createPrismaClient() {
   if (USE_MOCK_DATA) {
@@ -14,19 +14,18 @@ function createPrismaClient() {
   }
 
   try {
-    console.log('Creating Prisma client...');
+    console.log('Creating Prisma client for PostgreSQL...');
     console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
 
     const client = new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
     });
 
-    console.log('Prisma client created successfully');
+    console.log('Prisma client created successfully for PostgreSQL');
     return client;
   } catch (error) {
     console.error('Failed to create Prisma client:', error);
-    console.log('Falling back to mock mode due to Prisma error');
-    return null as any; // Return null on error
+    throw error; // Don't fall back to mock mode in production
   }
 }
 
